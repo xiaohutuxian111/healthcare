@@ -4,50 +4,50 @@
 # @Author  : stone
 # @File    : model.py
 # @Desc    :
-from pydantic import BaseModel
+
+from sqlalchemy import Column, DateTime, Integer, String, ForeignKey, Boolean
+from sqlalchemy.orm import relationship
+
+from config.database import Base
 
 
-class Hero(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    name: str = Field(index=True)
-    age: int | None = Field(default=None, index=True)
-    secret_name: str
+class Patient(Base):
+    __tablename__ = 'patient'
+
+    pid = Column(Integer, primary_key=True, index=True, comment='患者唯一标识符')
+    name = Column(String, index=True, comment='患者姓名')
+    email = Column(String, unique=True, index=True, comment='患者电子邮件')
+    phone = Column(String, unique=True, index=True, comment='患者电话号码')
+    birth_date = Column(DateTime, comment='患者出生日期')
+    gender = Column(String, comment='患者性别')
+    address = Column(String, comment='患者地址')
+    occupation = Column(String, comment='患者职业')
+    emergency_contact_name = Column(String, comment='紧急联系人姓名')
+    emergency_contact_number = Column(String, comment='紧急联系人电话号码')
+    primary_physician = Column(String, comment='主要医生')
+    insurance_provider = Column(String, comment='保险提供商')
+    insurance_policy_number = Column(String, comment='保险政策编号')
+    allergies = Column(String, nullable=True, comment='过敏情况')
+    current_medication = Column(String, nullable=True, comment='当前用药')
+    family_medical_history = Column(String, nullable=True, comment='家族病史')
+    past_medical_history = Column(String, nullable=True, comment='既往病史')
+    identification_type = Column(String, nullable=True, comment='身份证明类型')
+    identification_number = Column(String, nullable=True, comment='身份证明编号')
+    identification_document = Column(String, nullable=True, comment='身份证明文件路径或URL')
+    privacy_consent = Column(Boolean, comment='隐私同意')
 
 
-class Patient(BaseModel):
-    __table__ = 'patient'
-    user_id =
-    userId: string;
-    name: string;
-    email: string;
-    phone: string;
-    birthDate: Date;
-    gender: Gender;
-    address: string;
-    occupation: string;
-    emergencyContactName: string;
-    emergencyContactNumber: string;
-    primaryPhysician: string;
-    insuranceProvider: string;
-    insurancePolicyNumber: string;
-    allergies: string | undefined;
-    currentMedication: string | undefined;
-    familyMedicalHistory: string | undefined;
-    pastMedicalHistory: string | undefined;
-    identificationType: string | undefined;
-    identificationNumber: string | undefined;
-    identificationDocument: FormData | undefined;
-    privacyConsent: boolean;
+class AppointMent(Base):
+    __tablename__ = 'appointment'  # 使用小写表名是一个常见的约定
 
+    aid = Column(Integer, primary_key=True, index=True, comment='预约唯一标识符')
+    patient_id = Column(Integer, ForeignKey('patient.user_id'), index=True, comment='患者唯一标识符')
+    schedule = Column(DateTime, comment='预约时间')
+    status = Column(String, comment='预约状态')
+    primaryPhysician = Column(String, comment='主要医生')
+    reason = Column(String, comment='预约原因')
+    note = Column(String, comment='预约备注')
+    user_id = Column(String, index=True, comment='用户唯一标识符')
+    cancellation_reason = Column(String, nullable=True, comment='取消原因')
 
-class Appointment(BaseModel):
-    __table__ = 'Appointment'
-
-    patient: Patient;
-    schedule: Date;
-    status: Status;
-    primaryPhysician: string;
-    reason: string;
-    note: string;
-    userId: string;
-    cancellationReason: string | null;
+    patient = relationship("Patient", back_populates="appointments")
