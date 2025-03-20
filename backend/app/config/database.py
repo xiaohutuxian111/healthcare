@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase
 from urllib.parse import quote_plus
-from config.env import DataBaseConfig
+from backend.app.config.env import DataBaseConfig
 
 ASYNC_SQLALCHEMY_DATABASE_URL = (
     f'mysql+asyncmy://{DataBaseConfig.db_username}:{quote_plus(DataBaseConfig.db_password)}@'

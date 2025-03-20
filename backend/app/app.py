@@ -7,6 +7,5 @@ if __name__ == '__main__':
         app='app:app',
         host=AppConfig.app_host,
         port=AppConfig.app_port,
-
         reload=AppConfig.app_reload,
     )

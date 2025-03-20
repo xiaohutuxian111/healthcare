@@ -13,7 +13,7 @@ class AppSettings(BaseSettings):
     """
 
     app_env: str = 'dev'
-    app_name: str = 'FluxServer'
+    app_name: str = 'HealthCare'
     app_root_path: str = '/dev-api'
     app_static_path: str = os.path.join(os.getcwd(), "static/templates")
     app_host: str = '0.0.0.0'
@@ -44,8 +44,8 @@ class DataBaseSettings(BaseSettings):
     db_host: str = '127.0.0.1'
     db_port: int = 3306
     db_username: str = 'root'
-    db_password: str = 'xxxx'
-    db_database: str = 'xxxx'
+    db_password: str = 'root'
+    db_database: str = 'healthcare'
     db_echo: bool = True
     db_max_overflow: int = 10
     db_pool_size: int = 50
@@ -77,7 +77,7 @@ class UploadSettings:
     上传配置
     """
     UPLOAD_PREFIX: str = '/profile'
-    UPLOAD_PATH: str = 'flux_admin/upload_path'
+    UPLOAD_PATH: str = 'healthcare/upload_path'
     UPLOAD_MACHINE: str = 'A'
     DEFAULT_ALLOWED_EXTENSION: list = [
         # 图片
@@ -108,7 +108,7 @@ class UploadSettings:
         # pdf
         'pdf',
     ]
-    DOWNLOAD_PATH: str = 'flux_admin/download_path'
+    DOWNLOAD_PATH: str = 'healthcare/download_path'
 
     def __init__(self):
         if not os.path.exists(self.UPLOAD_PATH):

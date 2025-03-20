@@ -5,56 +5,62 @@
 # @File    : schmed.py
 # @Desc    :
 
+from pydantic import BaseModel
+from typing import Literal, Optional
+from pydantic import FormData
 
 
 
-declare type Gender = "Male" | "Female" | "Other";
-declare type Status = "pending" | "scheduled" | "cancelled";
+class RegisterUser(BaseModel):
+    user_id: str
+    birth_date: str
+    gender: Literal["Male", "Female", "Other"]
+    address: str
+    occupation: str
+    emergencyContactName: str
+    emergencyContactNumber: str
+    primaryPhysician: str
+    insuranceProvider: str
+    insurancePolicyNumber: str
+    allergies: Optional[str] = None
+    currentMedication: Optional[str] = None
+    familyMedicalHistory: Optional[str] = None
+    pastMedicalHistory: Optional[str] = None
+    identificationType: Optional[str] = None
+    identificationNumber: Optional[str] = None
+    identificationDocument: Optional[FormData] = None
+    privacyConsent: bool
 
-declare interface CreateUserParams {
-  name: string;
-  email: string;
-  phone: string;
-}
-declare interface User extends CreateUserParams {
-  $id: string;
-}
 
-declare interface RegisterUserParams extends CreateUserParams {
-  userId: string;
-  birthDate: Date;
-  gender: Gender;
-  address: string;
-  occupation: string;
-  emergencyContactName: string;
-  emergencyContactNumber: string;
-  primaryPhysician: string;
-  insuranceProvider: string;
-  insurancePolicyNumber: string;
-  allergies: string | undefined;
-  currentMedication: string | undefined;
-  familyMedicalHistory: string | undefined;
-  pastMedicalHistory: string | undefined;
-  identificationType: string | undefined;
-  identificationNumber: string | undefined;
-  identificationDocument: FormData | undefined;
-  privacyConsent: boolean;
-}
+class CreateUser(BaseModel):
+    name: str
+    email: str
+    phone: str
 
-declare type CreateAppointmentParams = {
-  userId: string;
-  patient: string;
-  primaryPhysician: string;
-  reason: string;
-  schedule: Date;
-  status: Status;
-  note: string | undefined;
-};
 
-declare type UpdateAppointmentParams = {
-  appointmentId: string;
-  userId: string;
-  timeZone: string;
-  appointment: Appointment;
-  type: string;
-};
+
+Appointment = dict  # 示例占位，具体类型需根据上下文调整
+
+
+class CreateAppointment(BaseModel):
+    user_id: str
+    patient: str
+    primary_physician: str
+    reason: str
+    schedule: str
+    status: Literal["pending", "confirmed", "completed", "cancelled"]
+    note: Optional[str] = None
+
+
+class UpdateAppointment(BaseModel):
+    appointment_id: str
+    user_id: str
+    time_zone: str
+    appointment: Appointment
+    type: str
+
+
+
+
+
+
