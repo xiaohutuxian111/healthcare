@@ -8,18 +8,6 @@ from faker import Faker
 class FakerUtil:
     def __init__(self):
         self.fake = Faker('zh_cn')
-        self.area_info = self.load_area_codes()
-
-    @lru_cache()
-    def load_area_codes(self):
-        area_info = []
-        with open('area_codes_info.txt', 'r', encoding='utf-8') as file:
-            for line in file:
-                parts = line.strip().split(',')
-                if len(parts) == 2:
-                    area_code, area_address = parts
-                    area_info.append({'area_code':area_code,'area_address':area_address})
-        return area_info
 
     def get_fake_name(self) -> str:
         return self.fake.name()
@@ -53,6 +41,19 @@ class FakerUtil:
     def get_area_address(self) -> str:
         area = random.choice(self.area_info)
         return area['area_address']
+
+
+class IDcardInfoUtils(FakerUtil):
+    @lru_cache()
+    def load_area_codes(self):
+        area_info = []
+        with open('area_codes_info.txt', 'r', encoding='utf-8') as file:
+            for line in file:
+                parts = line.strip().split(',')
+                if len(parts) == 2:
+                    area_code, area_address = parts
+                    area_info.append({'area_code': area_code, 'area_address': area_address})
+        return area_info
 
     def get_fake_idcard(self) -> str:
         # 生成前6位地址码（假设随机生成）
