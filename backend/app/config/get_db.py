@@ -1,8 +1,6 @@
 from backend.app.config.database import AsyncSessionLocal, async_engine, Base
 from backend.app.utils.log_util import logger
-import asyncio
-
-from model import  *
+from backend.app.src.entity import *
 
 
 async def get_db():
@@ -27,6 +25,5 @@ async def init_create_table():
         await conn.run_sync(Base.metadata.create_all)
     logger.info('数据库连接成功')
 
-
-if __name__ == '__main__':
-    asyncio.run(init_create_table())
+# if __name__ == '__main__':
+#     asyncio.run(init_create_table())
