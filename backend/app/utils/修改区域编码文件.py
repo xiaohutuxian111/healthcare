@@ -14,6 +14,8 @@ with open('area_codes.txt','r' , encoding='utf-8') as f:
             shen = line.split('|')[1]
         if line.count('|')==2:
             shi = line.split('||')[1]
+        if shen in ['北京市','天津市','上海市','重庆市']:
+            shi = ''
         if ',' in line:
             area_code ,area_address = line.split(',')
             result_dict.append({
