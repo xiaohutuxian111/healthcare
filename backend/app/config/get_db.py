@@ -2,7 +2,7 @@ from backend.app.config.database import AsyncSessionLocal, async_engine, Base
 from backend.app.utils.log_util import logger
 import asyncio
 
-from config.database import BaseMixin
+from model import  *
 
 
 async def get_db():
@@ -23,11 +23,10 @@ async def init_create_table():
     """
     logger.info('初始化数据库连接...')
     async with async_engine.begin() as conn:
+        logger.info(f"连接信息:{conn}")
         await conn.run_sync(Base.metadata.create_all)
     logger.info('数据库连接成功')
 
 
-
 if __name__ == '__main__':
     asyncio.run(init_create_table())
-

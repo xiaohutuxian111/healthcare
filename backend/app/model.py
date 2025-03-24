@@ -4,16 +4,17 @@
 # @Author  : stone
 # @File    : model.py
 # @Desc    :
+
 import datetime
 
-from sqlalchemy import mapped_column, DateTime, Integer, String, ForeignKey, Boolean
+from sqlalchemy import DateTime, Integer, String, ForeignKey, Boolean
 from sqlalchemy.orm import mapped_column, Mapped, relationship
-from config.database import BaseMixin
+from config.database import BaseMixin, Base
 
 from typing import Literal
 
 
-class Patient(BaseMixin):
+class Patient(Base, BaseMixin):
     __tablename__ = 'patient'
 
     name: Mapped[str] = mapped_column(String(50), index=True, comment='患者姓名')
@@ -38,7 +39,7 @@ class Patient(BaseMixin):
     privacy_consent: Mapped[bool] = mapped_column(Boolean, comment='隐私同意')
 
 
-class AppointMent(BaseMixin):
+class AppointMent(Base, BaseMixin):
     __tablename__ = 'appointment'
 
     schedule: Mapped[datetime.datetime] = mapped_column(DateTime, comment='预约时间')
@@ -46,14 +47,14 @@ class AppointMent(BaseMixin):
     reason: Mapped[str] = mapped_column(String(500), comment='预约原因')
     note: Mapped[str] = mapped_column(String(500), comment='预约备注')
     cancellation_reason: Mapped[str] = mapped_column(String(500), nullable=True, comment='取消原因')
-    pid: Mapped[int] = mapped_column(Integer, ForeignKey('patient.pid'), comment='患者ID')
-    did: Mapped[int] = mapped_column(Integer, ForeignKey('doctor.did'), comment='医生ID')
+    pid: Mapped[int] = mapped_column(Integer, ForeignKey('patient.id'), comment='患者ID')
+    did: Mapped[int] = mapped_column(Integer, ForeignKey('doctor.id'), comment='医生ID')
 
-    patient = relationship('Patient', back_populate='appointment')
-    doctor = relationship('Doctor', back_populate='appointment')
+    patient = relationship('Patient', back_populates='appointment')
+    doctor = relationship('Doctor', back_populates='appointment')
 
 
-class Doctor(BaseMixin):
+class Doctor(Base, BaseMixin):
     __tablename__ = 'doctor'
     name: Mapped[str] = mapped_column(String(50), nullable=False, comment='医生姓名')
     image_path: Mapped[str] = mapped_column(String(255), nullable=True, comment='医生头像')

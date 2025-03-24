@@ -23,14 +23,11 @@ async def lifespan(app: FastAPI):
     logger.info(f'{AppConfig.app_name}开始启动')
     worship()
     await init_create_table()
-    # app.state.redis = await RedisUtil.create_redis_pool()
-    # await RedisUtil.init_sys_dict(app.state.redis)
-    # await RedisUtil.init_sys_config(app.state.redis)
-    # await SchedulerUtil.init_system_scheduler()
+    app.state.redis = await RedisUtil.create_redis_pool()
     logger.info(f'{AppConfig.app_name}启动成功')
     yield
-    # await RedisUtil.close_redis_pool(app)
-    # await SchedulerUtil.close_system_scheduler()
+    await RedisUtil.close_redis_pool(app)
+
 
 
 # 初始化FastAPI对象
@@ -46,9 +43,6 @@ app = FastAPI(
 # 定义中间件
 @app.middleware("http")
 async def block_post_requests(request: Request, call_next):
-    # 检查请求方法是否为 POST
-    # if request.url.path not in ("/logout", "/login") and request.method in ("POST", "PUT", "PATCH", "DELETE"):
-    #     return ResponseUtil.error(msg="演示环境，暂不允许修改数据")
     # 继续处理其他请求
     response = await call_next(request)
     return response
