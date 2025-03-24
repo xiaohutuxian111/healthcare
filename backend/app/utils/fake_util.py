@@ -4,6 +4,7 @@ from collections import defaultdict
 from functools import lru_cache
 
 from faker import Faker
+from faker.contrib.pytest.plugin import faker
 
 
 class FakerUtil:
@@ -129,7 +130,8 @@ class IDcardInfoUtils(FakerUtil):
         return id_card_base + check_code
 
 
-if __name__ == '__main__':
-    f = FakerUtil()
-    idcard = IDcardInfoUtils()
-    print(idcard.idcard_info())
+
+IDcardInfo = IDcardInfoUtils()
+
+
+
