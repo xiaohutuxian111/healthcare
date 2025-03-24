@@ -2,6 +2,8 @@ from backend.app.config.database import AsyncSessionLocal, async_engine, Base
 from backend.app.utils.log_util import logger
 import asyncio
 
+from config.database import BaseMixin
+
 
 async def get_db():
     """

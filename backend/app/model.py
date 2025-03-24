@@ -4,54 +4,56 @@
 # @Author  : stone
 # @File    : model.py
 # @Desc    :
+import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy import mapped_column, DateTime, Integer, String, ForeignKey, Boolean
+from sqlalchemy.orm import mapped_column, Mapped, relationship
+from config.database import BaseMixin
 
-from config.database import Base
+from typing import Literal
 
 
-class Patient(Base):
+class Patient(BaseMixin):
     __tablename__ = 'patient'
 
-    pid = Column(Integer, primary_key=True, index=True, comment='患者唯一标识符')
-    name = Column(String(50), index=True, comment='患者姓名')
-    email = Column(String(50), unique=True, index=True, comment='患者电子邮件')
-    phone = Column(String(20), unique=True, index=True, comment='患者电话号码')
-    birth_date = Column(DateTime, comment='患者出生日期')
-    gender = Column(String, comment='患者性别')
-    address = Column(String(255), comment='患者地址')
-    occupation = Column(String(255), comment='患者职业')
-    emergency_contact_name = Column(String(50), comment='紧急联系人姓名')
-    emergency_contact_number = Column(String(20), comment='紧急联系人电话号码')
-    primary_physician = Column(String(50), comment='主治医生')
-    insurance_provider = Column(String(50), comment='保险提供商')
-    insurance_policy_number = Column(String(50), comment='保险政策编号')
-    allergies = Column(String(500), nullable=True, comment='过敏情况')
-    current_medication = Column(String(500), nullable=True, comment='当前用药')
-    family_medical_history = Column(String(500), nullable=True, comment='家族病史')
-    past_medical_history = Column(String(500), nullable=True, comment='既往病史')
-    identification_type = Column(String(50), nullable=True, comment='身份证明类型')
-    identification_number = Column(String(50), nullable=True, comment='身份证明编号')
-    identification_document = Column(String(50), nullable=True, comment='身份证明文件路径或URL')
-    privacy_consent = Column(Boolean, comment='隐私同意')
+    name: Mapped[str] = mapped_column(String(50), index=True, comment='患者姓名')
+    email: Mapped[str] = mapped_column(String(50), unique=True, index=True, comment='患者电子邮件')
+    phone: Mapped[str] = mapped_column(String(20), unique=True, index=True, comment='患者电话号码')
+    birth_date: Mapped[datetime.datetime] = mapped_column(DateTime, comment='患者出生日期')
+    gender: Mapped[Literal['0', '1', '2']] = mapped_column(String(1), comment='患者性别(0:未知,1:男,2:女)')
+    address: Mapped[str] = mapped_column(String(255), comment='患者地址')
+    occupation: Mapped[str] = mapped_column(String(255), comment='患者职业')
+    emergency_contact_name: Mapped[str] = mapped_column(String(50), comment='紧急联系人姓名')
+    emergency_contact_number: Mapped[str] = mapped_column(String(20), comment='紧急联系人电话号码')
+    primary_physician: Mapped[str] = mapped_column(String(50), comment='主治医生')
+    insurance_provider: Mapped[str] = mapped_column(String(50), comment='保险提供商')
+    insurance_policy_number: Mapped[str] = mapped_column(String(50), comment='保险政策编号')
+    allergies: Mapped[str] = mapped_column(String(500), nullable=True, comment='过敏情况')
+    current_medication: Mapped[str] = mapped_column(String(500), nullable=True, comment='当前用药')
+    family_medical_history: Mapped[str] = mapped_column(String(500), nullable=True, comment='家族病史')
+    past_medical_history: Mapped[str] = mapped_column(String(500), nullable=True, comment='既往病史')
+    identification_type: Mapped[str] = mapped_column(String(50), nullable=True, comment='身份证明类型')
+    identification_number: Mapped[str] = mapped_column(String(50), nullable=True, comment='身份证明编号')
+    identification_document: Mapped[str] = mapped_column(String(50), nullable=True, comment='身份证明文件路径或URL')
+    privacy_consent: Mapped[bool] = mapped_column(Boolean, comment='隐私同意')
 
 
-class AppointMent(Base):
+class AppointMent(BaseMixin):
     __tablename__ = 'appointment'
 
-    aid = Column(Integer, primary_key=True, index=True, comment='预约唯一标识符')
-    patient_id = Column(Integer, ForeignKey('patient.user_id'), index=True, comment='患者唯一标识符')
-    schedule = Column(DateTime, comment='预约时间')
-    status = Column(Integer, comment='预约状态:')
-    reason = Column(String, comment='预约原因')
-    note = Column(String, comment='预约备注')
-    cancellation_reason = Column(String, nullable=True, comment='取消原因')
-    pid = Column(Integer, ForeignKey('patient.pid'), comment='患者ID')
-    did = Column(Integer, ForeignKey('doctor.did'), comment='医生ID')
+    schedule: Mapped[datetime.datetime] = mapped_column(DateTime, comment='预约时间')
+    status: Mapped[int] = mapped_column(Integer, comment='预约状态:')
+    reason: Mapped[str] = mapped_column(String(500), comment='预约原因')
+    note: Mapped[str] = mapped_column(String(500), comment='预约备注')
+    cancellation_reason: Mapped[str] = mapped_column(String(500), nullable=True, comment='取消原因')
+    pid: Mapped[int] = mapped_column(Integer, ForeignKey('patient.pid'), comment='患者ID')
+    did: Mapped[int] = mapped_column(Integer, ForeignKey('doctor.did'), comment='医生ID')
+
+    patient = relationship('Patient', back_populate='appointment')
+    doctor = relationship('Doctor', back_populate='appointment')
 
 
-class Doctor(Base):
-    did = Column(Integer, primary_key=True, index=True, comment='医生唯一标识符')
-    name = Column(String(50), nullable=False, comment='医生姓名')
-    image_path = Column(String(255), nullable=True, comment='医生头像')
+class Doctor(BaseMixin):
+    __tablename__ = 'doctor'
+    name: Mapped[str] = mapped_column(String(50), nullable=False, comment='医生姓名')
+    image_path: Mapped[str] = mapped_column(String(255), nullable=True, comment='医生头像')
