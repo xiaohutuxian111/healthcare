@@ -22,11 +22,12 @@ patientController = APIRouter(prefix='/patient/patient', dependencies=[Depends(L
 async def get_patient_list(
         request: Request,
         query_db: AsyncSession = Depends(get_db),
-        page_query: PatientPageModel = Depends( PatientPageModel.as_query),
+        page_query: PatientPageModel = Depends(PatientPageModel.as_query),
 ):
     patient_result = await PatientService.get_patient_list(query_db, page_query)
 
     return ResponseUtil.success(model_content=patient_result)
+
 
 @patientController.get('/getById/{patientId}')
 async def get_patient_by_id(
@@ -39,53 +40,49 @@ async def get_patient_by_id(
 
 
 @patientController.post('/add')
-@Log(title='patient', business_type=BusinessType.INSERT)
-async def add_patient (
-    request: Request,
-    add_model: PatientModel,
-    query_db: AsyncSession = Depends(get_db),
-    current_user: CurrentUserModel = Depends(LoginService.get_current_user),
+async def add_patient(
+        request: Request,
+        add_model: PatientModel,
+        query_db: AsyncSession = Depends(get_db),
+        current_user: CurrentUserModel = Depends(LoginService.get_current_user),
 ):
-
     add_model.create_by = current_user.user.user_id
     add_model.dept_id = current_user.user.dept_id
     add_dict_type_result = await PatientService.add_patient(query_db, add_model)
     return ResponseUtil.success(data=add_dict_type_result)
 
+
 @patientController.put('/update')
-@Log(title='patient', business_type=BusinessType.UPDATE)
 async def update_patient(
-    request: Request,
-    edit_model: PatientModel,
-    query_db: AsyncSession = Depends(get_db),
-    current_user: CurrentUserModel = Depends(LoginService.get_current_user),
+        request: Request,
+        edit_model: PatientModel,
+        query_db: AsyncSession = Depends(get_db),
+        current_user: CurrentUserModel = Depends(LoginService.get_current_user),
 ):
     add_dict_type_result = await PatientService.update_patient(query_db, edit_model)
     return ResponseUtil.success(data=add_dict_type_result)
 
 
 @patientController.delete('/delete/{patientIds}')
-@Log(title='patient', business_type=BusinessType.DELETE)
 async def del_patient(
-    request: Request,
-    patientIds: str,
-    query_db: AsyncSession = Depends(get_db),
-    current_user: CurrentUserModel = Depends(LoginService.get_current_user),
+        request: Request,
+        patientIds: str,
+        query_db: AsyncSession = Depends(get_db),
+        current_user: CurrentUserModel = Depends(LoginService.get_current_user),
 ):
     ids = patientIds.split(',')
     del_result = await PatientService.del_patient(query_db, ids)
     return ResponseUtil.success(data=del_result)
 
+
 @patientController.post('/export')
-@Log(title='patient', business_type=BusinessType.EXPORT)
 async def export_patient(
-    request: Request,
-    patient_form: PatientPageModel = Form(),
-    query_db: AsyncSession = Depends(get_db),
+        request: Request,
+        patient_form: PatientPageModel = Form(),
+        query_db: AsyncSession = Depends(get_db),
 ):
     # 获取全量数据
     export_result = await PatientService.export_patient_list(
         query_db, patient_form
     )
     return ResponseUtil.streaming(data=bytes2file_response(export_result))
-

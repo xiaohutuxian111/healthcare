@@ -2,8 +2,8 @@
 from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_camel
-from typing import List, Literal, Optional, Union
-from src.annotation.pydantic_annotation import as_query
+from typing import  Optional
+from utils.pydantic_annotation import as_query
 
 
 class PatientModel(BaseModel):

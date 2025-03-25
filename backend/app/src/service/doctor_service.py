@@ -14,8 +14,8 @@ class DoctorService:
     """
 
     @classmethod
-    async def get_doctor_list(cls, query_db: AsyncSession, query_object: DoctorPageModel, data_scope_sql: str) -> [list | PageResponseModel]:
-        doctor_list = await DoctorDao.get_doctor_list(query_db, query_object, data_scope_sql, is_page=True)
+    async def get_doctor_list(cls, query_db: AsyncSession, query_object: DoctorPageModel) -> [list | PageResponseModel]:
+        doctor_list = await DoctorDao.get_doctor_list(query_db, query_object, is_page=True)
         return doctor_list
 
     @classmethod

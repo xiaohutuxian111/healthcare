@@ -77,7 +77,7 @@ class UploadSettings:
     上传配置
     """
     UPLOAD_PREFIX: str = '/profile'
-    UPLOAD_PATH: str = 'app/upload_path'
+    UPLOAD_PATH: str = 'files/upload_path'
     UPLOAD_MACHINE: str = 'A'
     DEFAULT_ALLOWED_EXTENSION: list = [
         # 图片
@@ -108,7 +108,7 @@ class UploadSettings:
         # pdf
         'pdf',
     ]
-    DOWNLOAD_PATH: str = 'app/download_path'
+    DOWNLOAD_PATH: str = 'files/download_path'
 
     def __init__(self):
         if not os.path.exists(self.UPLOAD_PATH):
