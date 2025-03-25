@@ -2,11 +2,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from starlette.responses import JSONResponse
 
+import router_manager
 from config.env import AppConfig
 from config.get_db import init_create_table
 from config.get_redis import RedisUtil
 from exceptions.handle import handle_exception
 from middlewares.handle import handle_middleware
+from sub_applications.handle import handle_sub_applications
 # from router import router_manager
 
 # from sub_applications.handle import handle_sub_applications
@@ -27,7 +29,6 @@ async def lifespan(app: FastAPI):
     logger.info(f'{AppConfig.app_name}启动成功')
     yield
     await RedisUtil.close_redis_pool(app)
-
 
 
 # 初始化FastAPI对象
@@ -54,6 +55,6 @@ handle_middleware(app)
 handle_exception(app)
 
 # # 加载路由列表
-# app.include_router(router_manager.register_router())
+app.include_router(router_manager.register_router())
 # # 挂载子应用
-# handle_sub_applications(app)
+handle_sub_applications(app)

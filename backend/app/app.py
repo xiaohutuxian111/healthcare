@@ -9,3 +9,4 @@ if __name__ == '__main__':
         port=AppConfig.app_port,
         reload=AppConfig.app_reload,
     )
+

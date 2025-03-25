@@ -1,12 +1,13 @@
 import datetime
 
-from sqlalchemy import Column, Integer, DateTime, String, text
+from sqlalchemy import Column, Integer, DateTime, String
 from sqlalchemy.ext.asyncio import create_async_engine,async_sessionmaker,AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from typing  import Literal
 
 from urllib.parse import quote_plus
 from backend.app.config.env import DataBaseConfig
+
 
 
 

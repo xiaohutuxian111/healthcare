@@ -1,21 +1,14 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-# @Time    : 2025/3/16 18:08
-# @Author  : stone
-# @File    : model.py
-# @Desc    :
-
-import datetime
-
-from sqlalchemy import DateTime, Integer, String, ForeignKey, Boolean
-from sqlalchemy.orm import mapped_column, Mapped, relationship
-from config.database import BaseMixin, Base
+# -*- coding:utf-8 -*-
 
 from typing import Literal
+import datetime
+from sqlalchemy import String, DateTime, Boolean
+from config.database import BaseMixin, Base
+from sqlalchemy.orm import mapped_column, Mapped
 
 
 class Patient(Base, BaseMixin):
-    __tablename__ = 'patient'
+    __tablename__ = "patient"
 
     name: Mapped[str] = mapped_column(String(50), index=True, comment='患者姓名')
     email: Mapped[str] = mapped_column(String(50), unique=True, index=True, comment='患者电子邮件')
@@ -37,24 +30,3 @@ class Patient(Base, BaseMixin):
     identification_number: Mapped[str] = mapped_column(String(50), nullable=True, comment='身份证明编号')
     identification_document: Mapped[str] = mapped_column(String(50), nullable=True, comment='身份证明文件路径或URL')
     privacy_consent: Mapped[bool] = mapped_column(Boolean, comment='隐私同意')
-
-
-class AppointMent(Base, BaseMixin):
-    __tablename__ = 'appointment'
-
-    schedule: Mapped[datetime.datetime] = mapped_column(DateTime, comment='预约时间')
-    status: Mapped[int] = mapped_column(Integer, comment='预约状态:')
-    reason: Mapped[str] = mapped_column(String(500), comment='预约原因')
-    note: Mapped[str] = mapped_column(String(500), comment='预约备注')
-    cancellation_reason: Mapped[str] = mapped_column(String(500), nullable=True, comment='取消原因')
-    pid: Mapped[int] = mapped_column(Integer, ForeignKey('patient.id'), comment='患者ID')
-    did: Mapped[int] = mapped_column(Integer, ForeignKey('doctor.id'), comment='医生ID')
-
-    patient = relationship('Patient', back_populates='appointment')
-    doctor = relationship('Doctor', back_populates='appointment')
-
-
-class Doctor(Base, BaseMixin):
-    __tablename__ = 'doctor'
-    name: Mapped[str] = mapped_column(String(50), nullable=False, comment='医生姓名')
-    image_path: Mapped[str] = mapped_column(String(255), nullable=True, comment='医生头像')
