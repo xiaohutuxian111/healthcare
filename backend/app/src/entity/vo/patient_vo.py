@@ -44,3 +44,12 @@ class PatientPageModel(PatientModel):
     """
     page_num: int = Field(default=1, description='当前页码')
     page_size: int = Field(default=10, description='每页记录数')
+
+
+class PatientRegisterModel(PatientModel):
+    """
+    导出模型
+    """
+    name:Optional[str]  =Field(default=None, description='患者姓名')
+    email:Optional[str]  =Field(default=None, description='患者电子邮件')
+    phone:Optional[str]  =Field(default=None, description='患者电话号码')
