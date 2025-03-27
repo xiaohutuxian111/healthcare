@@ -18,14 +18,17 @@ from src.service.patient_service import PatientService
 patientController = APIRouter(prefix='/patients', dependencies=[Depends(LoginService.get_current_user)])
 
 
-@patientController.get('/{patient_id}/register', response_model=PatientModel, )
+@patientController.get('/{patient_id}/register', response_model=PatientModel)
 async def register_or_create(request: Request, patient_id: int, patient: PatientRegisterModel,
                              query_db: AsyncSession = Depends(get_db)):
     patient_info = await PatientService.get_patient_by_id(query_db, patient_id)
+
+    print(patient_info)
+
     if patient_info is None:
         await  PatientService.add_patient(query_db, patient)
 
-# /patients/${newUser.$id}/register
+
 
 
 #

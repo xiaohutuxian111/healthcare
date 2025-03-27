@@ -6,7 +6,12 @@ from typing import Optional
 from utils.pydantic_annotation import as_query
 
 
-class DoctorModel(BaseModel):
+class DoctorBase(BaseModel):
+    image_path: Optional[str] = Field(default=None, description='医生头像')
+    name: Optional[str] = Field(default=None, description='医生姓名')
+
+
+class DoctorModel(DoctorBase):
     """
     表对应pydantic模型
     """
@@ -14,8 +19,6 @@ class DoctorModel(BaseModel):
     create_time: Optional[datetime] = Field(default=None, description='创建时间')
     del_flag: Optional[str] = Field(default=None, description='删除标志(0代表存在 1代表删除)')
     id: Optional[int] = Field(default=None, description='')
-    image_path: Optional[str] = Field(default=None, description='医生头像')
-    name: Optional[str] = Field(default=None, description='医生姓名')
     update_time: Optional[datetime] = Field(default=None, description='更新时间')
 
 

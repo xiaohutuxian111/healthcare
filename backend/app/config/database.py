@@ -11,6 +11,7 @@ from backend.app.config.env import DataBaseConfig
 
 
 
+
 ASYNC_SQLALCHEMY_DATABASE_URL = (
     f'mysql+asyncmy://{DataBaseConfig.db_username}:{quote_plus(DataBaseConfig.db_password)}@'
     f'{DataBaseConfig.db_host}:{DataBaseConfig.db_port}/{DataBaseConfig.db_database}'

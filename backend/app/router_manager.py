@@ -3,13 +3,12 @@ from fastapi import APIRouter
 from src.controller.doctor_controller import doctorController
 from src.controller.appointment_controller import appointmentController
 from src.controller.patient_controller import patientController
-from src.controller.login_controller import loginController
+
 
 app_controllers = [
-    {'router': loginController, 'tags': ['登录模块']},
-    {'router': patientController, 'tags': ['验证码模块']},
-    {'router': doctorController, 'tags': ['系统管理-用户管理']},
-    {'router': appointmentController, 'tags': ['系统管理-角色管理']},
+    {'router': patientController, 'tags': ['患者模块']},
+    {'router': doctorController, 'tags': ['医生模块']},
+    {'router': appointmentController, 'tags': ['预定模块']},
 ]
 
 

@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, EmailStr
 from pydantic.alias_generators import to_camel
 from typing import  Optional
 from utils.pydantic_annotation import as_query
@@ -50,6 +50,6 @@ class PatientRegisterModel(PatientModel):
     """
     导出模型
     """
-    name:Optional[str]  =Field(default=None, description='患者姓名')
-    email:Optional[str]  =Field(default=None, description='患者电子邮件')
-    phone:Optional[str]  =Field(default=None, description='患者电话号码')
+    name:Optional[str]  =Field(default=None, description='患者姓名' ,max_length=50)
+    email:Optional[EmailStr]  =Field(default=None, description='患者电子邮件')
+    phone:Optional[str]  =Field(default=None, description='患者电话号码',max_length=20)

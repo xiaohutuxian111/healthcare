@@ -1,6 +1,8 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from starlette.responses import JSONResponse
+from fastapi import FastAPI, Request
+from fastapi import Depends
 
 import router_manager
 from config.env import AppConfig
@@ -25,10 +27,10 @@ async def lifespan(app: FastAPI):
     logger.info(f'{AppConfig.app_name}开始启动')
     worship()
     await init_create_table()
-    app.state.redis = await RedisUtil.create_redis_pool()
+    # app.state.redis = await RedisUtil.create_redis_pool()
     logger.info(f'{AppConfig.app_name}启动成功')
     yield
-    await RedisUtil.close_redis_pool(app)
+    # await RedisUtil.close_redis_pool(app)
 
 
 # 初始化FastAPI对象
