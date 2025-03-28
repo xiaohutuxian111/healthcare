@@ -1,86 +1,46 @@
 # -*- coding:utf-8 -*-
+from datetime import datetime
 
-from fastapi import APIRouter, Depends, Form,Request
+from fastapi import APIRouter, Depends, Form, Request
+from pydantic_validation_decorator import ValidateFields
 from sqlalchemy.ext.asyncio import AsyncSession
-from config.get_db import get_db
+from backend.app.config.get_db import get_db
 
 from src.service.login_service import LoginService
 
 from src.entity.vo.user_vo import CurrentUserModel
 from utils.response_util import ResponseUtil
 from utils.common_util import bytes2file_response
+from backend.app.utils.log_util import logger
 
-from src.entity.vo.doctor_vo import DoctorPageModel, DoctorModel, DoctorBase
-from src.service.doctor_service import DoctorService
+from src.entity.vo.doctor_vo import DoctorModel
+from backend.app.src.service.doctor_service import DoctorService
 
-doctorController = APIRouter(prefix='/doctor', dependencies=[Depends(LoginService.get_current_user)])
-
-
-# @doctorController.get('/list')
-# async def get_doctor_list(
-#         request: Request,
-#         query_db: AsyncSession = Depends(get_db),
-#         page_query: DoctorPageModel = Depends( DoctorPageModel.as_query),
-# ):
-#     doctor_result = await DoctorService.get_doctor_list(query_db, page_query)
-#
-#     return ResponseUtil.success(model_content=doctor_result)
-#
-# @doctorController.get('/getById/{doctorId}')
-# async def get_doctor_by_id(
-#         request: Request,
-#         doctorId: int,
-#         query_db: AsyncSession = Depends(get_db),
-#
-# ):
-#     doctor = await DoctorService.get_doctor_by_id(query_db, doctorId)
-#     return ResponseUtil.success(data=doctor)
+# doctorController = APIRouter(prefix='/doctor', dependencies=[Depends(LoginService.get_current_user)])
+doctorController = APIRouter(prefix='/doctor')
 
 
 @doctorController.post('/add')
-async def add_doctor (
-    request: Request,
-    doctor_info: DoctorBase,
-    query_db: AsyncSession = Depends(get_db)
+@ValidateFields(validate_model='add_doctor')
+async def add_doctor(
+        request: Request,
+        add_doctor: DoctorModel,
+        query_db: AsyncSession = Depends(get_db)
+
 ):
-
-    add_dict_type_result = await DoctorService.add_doctor(query_db, add_model)
-    return ResponseUtil.success(data=add_dict_type_result)
-
-
-
-
-# @doctorController.put('/update')
-# async def update_doctor(
-#     request: Request,
-#     edit_model: DoctorModel,
-#     query_db: AsyncSession = Depends(get_db),
-# ):
-#     add_dict_type_result = await DoctorService.update_doctor(query_db, edit_model)
-#     return ResponseUtil.success(data=add_dict_type_result)
+    add_doctor.create_time = datetime.now()
+    add_doctor.update_time = datetime.now()
+    add_doctor.del_flag = '0'
+    add_doctor_result = await   DoctorService.add_doctor_services(request, query_db, add_doctor)
+    return ResponseUtil.success(msg=add_doctor_result)
 
 
-# @doctorController.delete('/delete/{doctorIds}')
-# async def del_doctor(
-#     request: Request,
-#     doctorIds: str,
-#     query_db: AsyncSession = Depends(get_db),
-#     current_user: CurrentUserModel = Depends(LoginService.get_current_user),
-# ):
-#     ids = doctorIds.split(',')
-#     del_result = await DoctorService.del_doctor(query_db, ids)
-#     return ResponseUtil.success(data=del_result)
-#
-# @doctorController.post('/export')
-#
-# async def export_doctor(
-#     request: Request,
-#     doctor_form: DoctorPageModel = Form(),
-#     query_db: AsyncSession = Depends(get_db),
-# ):
-#     # 获取全量数据
-#     export_result = await DoctorService.export_doctor_list(
-#         query_db, doctor_form
-#     )
-#     return ResponseUtil.streaming(data=bytes2file_response(export_result))
-
+@doctorController.put('/edit')
+@ValidateFields(validate_model='edit_doctor')
+async def edit_doctor(request: Request, edit_doctor: DoctorModel, query_db: AsyncSession = Depends(get_db)):
+    edit_doctor.update_time = datetime.now()
+    if edit_doctor.id is None:
+        return ResponseUtil.error(msg='id不能为空')
+    edit_doctor_result = await DoctorService.edit_doctor_services(request, query_db, edit_doctor)
+    logger.info(edit_doctor_result)
+    return ResponseUtil.success(msg=edit_doctor_result.message)

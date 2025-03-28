@@ -4,8 +4,7 @@ import datetime
 from sqlalchemy import String, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
 from backend.app.config.database import BaseMixin, Base
-from backend.app.src.entity.do.doctor_do import Doctor
-from backend.app.src.entity.do.patient_do import Patient
+
 
 
 class Appointment(Base, BaseMixin):
@@ -19,8 +18,6 @@ class Appointment(Base, BaseMixin):
     pid: Mapped[int] = mapped_column(Integer, ForeignKey('patient.id'), comment='患者ID')
     did: Mapped[int] = mapped_column(Integer, ForeignKey('doctor.id'), comment='医生ID')
 
-    patient: Mapped['Patient'] = relationship(lazy=False, back_populates='appointment')
-    doctor: Mapped['Doctor'] = relationship(lazy=False, back_populates='appointment')
 
     def __repr__(self):
         return f"<Appointment(id={self.id}, schedule={self.schedule}, status={self.status}, reason={self.reason}, note={self.note}, pid={self.pid}, did={self.did})>"

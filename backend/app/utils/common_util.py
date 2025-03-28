@@ -8,7 +8,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from sqlalchemy.engine.row import Row
 from typing import Any, Dict, List, Literal, Union
-from config.database import Base
+from backend.app.config.database import Base
 from config.env import CachePathConfig
 
 
@@ -48,6 +48,8 @@ class SqlalchemyUtil:
             base_dict.pop('_sa_instance_state', None)
         elif isinstance(obj, dict):
             base_dict = obj.copy()
+        else:
+            return obj
         if transform_case == 'snake_to_camel':
             temp_dict: dict = {}
             for k, v in base_dict.items():
@@ -85,7 +87,7 @@ class SqlalchemyUtil:
 
     @classmethod
     def serialize_result(
-            cls, result: Any, transform_case: Literal['no_case', 'snake_to_camel', 'camel_to_snake'] = 'no_case'
+        cls, result: Any, transform_case: Literal['no_case', 'snake_to_camel', 'camel_to_snake'] = 'no_case'
     ):
         """
         将sqlalchemy查询结果序列化
@@ -94,6 +96,8 @@ class SqlalchemyUtil:
         :param transform_case: 转换得到的结果形式，可选的有'no_case'(不转换)、'snake_to_camel'(下划线转小驼峰)、'camel_to_snake'(小驼峰转下划线)，默认为'no_case'
         :return: 序列化结果
         """
+
+
         if isinstance(result, (Base, dict)):
             return cls.base_to_dict(result, transform_case)
         elif isinstance(result, list):

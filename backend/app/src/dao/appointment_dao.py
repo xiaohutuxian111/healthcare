@@ -5,8 +5,8 @@ from datetime import datetime, time
 from sqlalchemy import and_, delete, desc, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.entity.do.appointment_do import Appointment
-from src.entity.vo.appointment_vo import AppointmentPageModel, AppointmentModel
+from backend.app.src.entity.do.appointment_do import Appointment
+from backend.app.src.entity.vo.appointment_vo import AppointmentPageModel, AppointmentModel
 from utils.page_util import PageUtil, PageResponseModel
 
 

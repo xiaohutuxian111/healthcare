@@ -4,9 +4,9 @@ from typing import List
 from sqlalchemy import and_, delete, desc, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.entity.do.patient_do import Patient
-from src.entity.vo.patient_vo import PatientPageModel, PatientModel
-from utils.page_util import PageUtil, PageResponseModel
+from backend.app.src.entity.do.patient_do import Patient
+from backend.app.src.entity.vo.patient_vo import PatientPageModel, PatientModel
+from backend.app.utils.page_util import PageUtil, PageResponseModel
 
 
 class PatientDao:

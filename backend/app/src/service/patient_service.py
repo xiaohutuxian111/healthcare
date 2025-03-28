@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.common_util import CamelCaseUtil, export_list2excel
 from utils.page_util import PageResponseModel
-from src.dao.patient_dao import PatientDao
+from backend.app.src.dao.patient_dao import PatientDao
 from src.entity.vo.patient_vo import PatientPageModel, PatientModel
 
 

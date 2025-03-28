@@ -1,10 +1,12 @@
 # -*- coding:utf-8 -*-
 
-from typing import Literal
+from typing import Literal, List
 import datetime
 from sqlalchemy import String, DateTime, Boolean, ForeignKey, Integer
 from backend.app.config.database import BaseMixin, Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
+
+
 
 
 class Patient(Base, BaseMixin):
@@ -13,6 +15,10 @@ class Patient(Base, BaseMixin):
     name: Mapped[str] = mapped_column(String(50), index=True, comment='患者姓名')
     email: Mapped[str] = mapped_column(String(50), unique=True, index=True, comment='患者电子邮件')
     phone: Mapped[str] = mapped_column(String(20), unique=True, index=True, comment='患者电话号码')
+
+
+
+
 
     def __repr__(self):
         return f"Patient(id={self.id}, name={self.name}, email={self.email}, phone={self.phone})"
@@ -40,12 +46,5 @@ class PatientDetail(Base, BaseMixin):
     privacy_consent: Mapped[bool] = mapped_column(Boolean, comment='隐私同意')
     pid: Mapped[int] = mapped_column(Integer, ForeignKey('patient.id'), comment='患者ID')
 
-    patient: Mapped['Patient'] = relationship(lazy=False, back_populates='patient_detail')
 
-    def __repr__(self):
-        return (
-            f"PatientDetail(id={self.id}, birth_date={self.birth_date}, gender={self.gender}, address={self.address}, occupation={self.occupation}, "
-            f"emergency_contact_name={self.emergency_contact_name}, emergency_contact_number={self.emergency_contact_number}, primary_physician={self.primary_physician},"
-            f" insurance_provider={self.insurance_provider}, insurance_policy_number={self.insurance_policy_number}, allergies={self.allergies}, "
-            f"current_medication={self.current_medication}, family_medical_history={self.family_medical_history}, past_medical_history={self.past_medical_history}, "
-            f"identification_type={self.identification_type}, identification_number={self.identification_number}, identification_document={self.identification_document}, privacy_consent={self.privacy_consent})")
+

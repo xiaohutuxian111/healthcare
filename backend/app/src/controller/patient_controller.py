@@ -3,17 +3,17 @@
 from fastapi import APIRouter, Depends, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
-from config.enums import BusinessType
+from backend.app.config.enums import BusinessType
 from config.get_db import get_db
 
-from src.service.login_service import LoginService
+from backend.app.src.service.login_service import LoginService
 
-from src.entity.vo.user_vo import CurrentUserModel
-from utils.response_util import ResponseUtil
-from utils.common_util import bytes2file_response
+from backend.app.src.entity.vo.user_vo import CurrentUserModel
+from backend.app.utils.response_util import ResponseUtil
+from backend.app.utils.common_util import bytes2file_response
 
-from src.entity.vo.patient_vo import PatientPageModel, PatientModel, PatientRegisterModel
-from src.service.patient_service import PatientService
+from backend.app.src.entity.vo.patient_vo import PatientPageModel, PatientModel, PatientRegisterModel
+from backend.app.src.service.patient_service import PatientService
 
 patientController = APIRouter(prefix='/patients', dependencies=[Depends(LoginService.get_current_user)])
 

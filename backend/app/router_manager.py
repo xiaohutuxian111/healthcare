@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from src.controller.doctor_controller import doctorController
-from src.controller.appointment_controller import appointmentController
-from src.controller.patient_controller import patientController
+from backend.app.src.controller.doctor_controller import doctorController
+from backend.app.src.controller.appointment_controller import appointmentController
+from backend.app.src.controller.patient_controller import patientController
 
 
 app_controllers = [
