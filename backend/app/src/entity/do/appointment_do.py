@@ -3,9 +3,9 @@ import datetime
 
 from sqlalchemy import String, DateTime, Integer, ForeignKey
 from sqlalchemy.orm import relationship, mapped_column, Mapped
-from config.database import BaseMixin, Base
-from src.entity.do.doctor_do import Doctor
-from src.entity.do.patient_do import Patient
+from backend.app.config.database import BaseMixin, Base
+from backend.app.src.entity.do.doctor_do import Doctor
+from backend.app.src.entity.do.patient_do import Patient
 
 
 class Appointment(Base, BaseMixin):

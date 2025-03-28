@@ -1,5 +1,8 @@
-from backend.app.config.database import AsyncSessionLocal, async_engine, Base
+from backend.app.config.database import AsyncSessionLocal, async_engine,Base
 from backend.app.utils.log_util import logger
+from  backend.app.src.entity.do.doctor_do import Doctor
+from backend.app.src.entity.do.patient_do import Patient ,PatientDetail
+from backend.app.src.entity.do.appointment_do import Appointment
 
 
 async def get_db():
@@ -24,6 +27,7 @@ async def init_create_table():
         logger.info(f"准备创建的表: {Base.metadata.tables.keys()}")
         await conn.run_sync(Base.metadata.create_all)
     logger.info('数据库连接成功')
+
 
 
 if __name__ == '__main__':

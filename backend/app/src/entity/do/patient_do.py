@@ -3,7 +3,7 @@
 from typing import Literal
 import datetime
 from sqlalchemy import String, DateTime, Boolean, ForeignKey, Integer
-from config.database import BaseMixin, Base
+from backend.app.config.database import BaseMixin, Base
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
 
