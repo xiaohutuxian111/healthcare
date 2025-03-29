@@ -102,7 +102,7 @@ class DoctorService:
         return doctor_list_result
 
     @classmethod
-    async def del_doctor_services(cls, request:Request, query_db:AsyncSession, page_object:DeleteDoctorModel):
+    async def del_doctor_services(cls, request: Request, query_db: AsyncSession, page_object: DeleteDoctorModel):
         """
         删除doctor中的信息
         :param request:
@@ -111,17 +111,17 @@ class DoctorService:
         :return:
         """
         if page_object.doctor_ids:
-            doctor_id_list=  page_object.doctor_ids.strip().split(',')
+            doctor_id_list = page_object.doctor_ids.strip().split(',')
             try:
                 delete_doctor_list = []
                 for doctor_id in doctor_id_list:
-                    doctor_info =  await cls.doctor_detail_services(query_db, int(doctor_id))
-                    #Todo 检查当前医生是否存在预约,存在不能删除
+                    doctor_info = await cls.doctor_detail_services(query_db, int(doctor_id))
+                    # Todo 检查当前医生是否存在预约,存在不能删除
 
                     await DoctorDao.delete_doctor_dao(query_db, DoctorModel(id=int(doctor_id)))
                     delete_doctor_list.append(doctor_info)
                 await   query_db.commit()
-                return CrudResponseModel(is_success=True, message='删除doctor成功',result=delete_doctor_list)
+                return CrudResponseModel(is_success=True, message='删除doctor成功', result=delete_doctor_list)
 
 
             except Exception as e:
@@ -130,3 +130,29 @@ class DoctorService:
         else:
             raise ServiceException(message='需要删除的doctor的id为空')
 
+    @classmethod
+    async def export_doctor_list_services(cls, doctor_list: List):
+        """
+        导出字典信息service
+        :param doctor_list:
+        :return:
+        """
+        mapping_dict = {
+            'name': '医生姓名',
+            'email': '医生邮箱',
+            'delFlag': '状态'
+
+        }
+
+        data = doctor_list
+        for item in data:
+            if item['delFlag'] == '0':
+                item['delFlag'] = '启用'
+            else:
+                item['delFlag'] = '禁用'
+        new_data = [
+            {mapping_dict.get(key): value for key, value in item.items() if mapping_dict.get(key)} for item in data
+        ]
+        binary_data = export_list2excel(new_data)
+
+        return binary_data

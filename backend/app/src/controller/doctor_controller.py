@@ -75,3 +75,22 @@ async def delete_doctor(
     delete_doctor_result = await DoctorService.del_doctor_services(request, query_db, delete_doctor)
     logger.info(delete_doctor_result.message)
     return ResponseUtil.success(msg=delete_doctor_result.message)
+
+
+@doctorController.post('/export')
+async def export_doctor_list(request: Request, doctor_page_query: DoctorPageQueryModel = Form(),
+                             query_db: AsyncSession = Depends(get_db)):
+    """
+    导出数据
+    :param request:
+    :param doctor_page_query:
+    :param query_db:
+    :return:
+    """
+    # 获取全量数据
+    doctor_query_list = await DoctorService.get_doctor_list_services(query_db, doctor_page_query, is_page=False)
+
+    doctor_export_result = await DoctorService.export_doctor_list_services(doctor_query_list)
+    logger.info("导出成功")
+
+    return ResponseUtil.streaming(data=bytes2file_response(doctor_export_result))
