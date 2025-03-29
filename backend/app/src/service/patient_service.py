@@ -21,6 +21,10 @@ class PatientService:
     """
 
     @classmethod
+    async def get_patient_by_id(cls, query_db: AsyncSession, patient_id: int):
+        patient = await  PatientDao.get_patient_by_id(query_db, patient_id)
+        return patient
+    @classmethod
     async def get_patient_list(cls, request: Request, query_db: AsyncSession, page_object: PatientModel,
                                is_page: bool = False):
         """
@@ -55,11 +59,7 @@ class PatientService:
             return CommonConstant.NOT_UNIQUE
         return CommonConstant.UNIQUE
 
-    @classmethod
-    async def get_patient_detail_by_id(cls, query_db: AsyncSession, patient_id: int):
-        patient_query = PatientModel(id=patient_id)
-        patient = await  PatientDao.get_patient_detail_by_info(query_db, patient_query)
-        return patient
+
 
     @classmethod
     async def get_patient_info(cls, query_db: AsyncSession, query_patient: PatientModel):

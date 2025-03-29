@@ -25,6 +25,11 @@ class DoctorService:
     """
 
     @classmethod
+    async def get_doctor_by_id(cls, query_db: AsyncSession, doctor_id: int):
+        doctor_info = await DoctorDao.get_doctor_by_id(query_db, doctor_id)
+        return doctor_info
+
+    @classmethod
     async def add_doctor_services(cls, request: Request, query_db: AsyncSession, page_object: DoctorModel):
         if not await cls.check_doctor_unique_services(query_db, page_object):
             raise ServiceException(

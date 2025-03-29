@@ -14,26 +14,26 @@ from backend.app.utils.page_util import PageUtil, PageResponseModel
 
 
 class DoctorDao:
-
     @classmethod
-    async def get_doctor_by_info(cls, db: AsyncSession, page_object: DoctorModel):
+    async def get_doctor_by_id(cls, db: AsyncSession, doctor_id: int):
+        doctor_info = (
+            (await db.execute(select(Doctor).where(Doctor.id == doctor_id,Doctor.del_flag == '0'))).scalars().first()
+        )
+        return doctor_info
+    @classmethod
+    async def get_doctor_by_info(cls, db: AsyncSession, doctor: DoctorModel):
         """
         根据医生的数据查询医生信息
         """
-        doctor_info = (
-            (
-                await   db.execute(
-                    select(Doctor).where(
-                        Doctor.name == page_object.name,
-                        Doctor.email == page_object.email,
-                        Doctor.del_flag == '0'
-                    )
-                )
-            )
-            .scalars()
-            .first()
-        )
-        return doctor_info
+
+        conditions = [doctor.del_flag == '0']
+        if doctor.name is not None:
+            conditions.append(doctor.name == doctor.name)
+        if doctor.email is not None:
+            conditions.append(doctor.email == doctor.email)
+
+        db_doctor = (await db.execute(select(Doctor).where(*conditions))).scalars().first()
+        return db_doctor
 
     @classmethod
     async def add_doctor(cls, db: AsyncSession, doctor: DoctorModel):
@@ -46,12 +46,6 @@ class DoctorDao:
 
         return db_doctor
 
-    @classmethod
-    async def get_doctor_detail_by_id(cls, db: AsyncSession, doctor_id: int):
-        doctor_info = (
-            (await db.execute(select(Doctor).where(Doctor.id == doctor_id))).scalars().first()
-        )
-        return doctor_info
 
     @classmethod
     async def edit_doctor(cls, db: AsyncSession, doctor: dict):

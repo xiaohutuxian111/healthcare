@@ -1,45 +1,54 @@
 # -*- coding:utf-8 -*-
 
 from typing import List
+from fastapi import Request
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from config.constant import CommonConstant
+from exceptions.exception import ServiceException
+from src.entity.vo.commom_vo import CrudResponseModel
 from utils.common_util import CamelCaseUtil, export_list2excel
 from utils.page_util import PageResponseModel
 from src.dao.appointment_dao import AppointmentDao
 from src.entity.vo.appointment_vo import AppointmentPageModel, AppointmentModel
+from backend.app.utils.log_util import logger
 
 
 class AppointmentService:
     """
-    用户管理模块服务层
+    预定管理服务层
     """
 
     @classmethod
-    async def get_appointment_list(cls, query_db: AsyncSession, query_object: AppointmentPageModel, data_scope_sql: str) -> [list | PageResponseModel]:
-        appointment_list = await AppointmentDao.get_appointment_list(query_db, query_object, data_scope_sql, is_page=True)
-        return appointment_list
+    async def add_appointment_services(cls, request: Request, query_db: AsyncSession, page_object: AppointmentModel):
+        """
+
+        :param request:
+        :param query_db:
+        :param page_object:
+        :return:
+        """
+        if not await  cls.check_appointment_unique_services(query_db, page_object):
+            raise ServiceException(message="当前患者和医生已有预约")
+
+        else:
+            try:
+                appointment = await AppointmentDao.add_appointment(query_db, page_object)
+                return CrudResponseModel(is_success=True, message="预约成功")
+            except Exception as e:
+                logger.error(f"Unexpected error: {e}")
+                raise ServiceException(message=f"预约失败")
 
     @classmethod
-    async def get_appointment_by_id(cls, query_db: AsyncSession, appointment_id: int) -> AppointmentModel:
-        appointment = await  AppointmentDao.get_by_id(query_db, appointment_id)
-        appointment_model = AppointmentModel(**CamelCaseUtil.transform_result(appointment))
-        return appointment_model
-
-
-    @classmethod
-    async def add_appointment(cls, query_db: AsyncSession, query_object: AppointmentModel) -> AppointmentModel:
-        appointment = await AppointmentDao.add_appointment(query_db, query_object)
-        appointment_model = AppointmentModel(**CamelCaseUtil.transform_result(appointment))
-        return appointment_model
-
-
-    @classmethod
-    async def update_appointment(cls, query_db: AsyncSession, query_object: AppointmentModel) -> AppointmentModel:
-        appointment = await AppointmentDao.edit_appointment(query_db, query_object)
-        appointment_model = AppointmentModel(**CamelCaseUtil.transform_result(appointment))
-        return appointment_model
-
-
-    @classmethod
-    async def del_appointment(cls, query_db: AsyncSession, appointment_ids: List[str]):
-        await AppointmentDao.del_appointment(query_db, appointment_ids)
-
+    async def check_appointment_unique_services(cls, query_db: AsyncSession, page_object: AppointmentModel):
+        """
+        检查订单的唯一性
+        :param query_db:
+        :param page_object:
+        :return:
+        """
+        appoint_id = -1 if page_object.id is None else page_object.id
+        appointment = await AppointmentDao.get_appointment_by_info(query_db, page_object)
+        if appointment and appoint_id != appointment.id:
+            return CommonConstant.NOT_UNIQUE
+        return CommonConstant.UNIQUE

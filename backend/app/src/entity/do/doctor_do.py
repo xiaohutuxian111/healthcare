@@ -17,4 +17,8 @@ class Doctor(Base, BaseMixin):
     image_path: Mapped[str] = mapped_column(String(255), nullable=True, comment='医生头像')
 
 
+    def __repr__(self):
+        return f"Doctor(id={self.id},name={self.name}, email={self.email}, image_path={self.image_path})"
+
+
 

@@ -76,3 +76,7 @@ class PatientDeTailModel(BaseModel):
     past_medical_history: Optional[str] = Field(default=None, description='既往病史')
     privacy_consent: Optional[int] = Field(default=None, description='隐私同意')
     pid: Optional[int] = Field(default=None, description='患者ID')
+
+    del_flag: Literal['0', '1'] = Field(default=None, description='删除标志(0代表存在 1代表删除)')
+    create_time: Optional[datetime] = Field(default=None, description='创建时间')
+    update_time: Optional[datetime] = Field(default=None, description='更新时间')

@@ -11,11 +11,12 @@ from backend.app.src.entity.vo.patient_vo import PatientModel, PatientPageQueryM
 from backend.app.utils.page_util import PageUtil, PageResponseModel
 from src.entity.vo.patient_vo import PatientDeTailModel
 
+from backend.app.utils.log_util import logger
 
 class PatientDao:
 
     @classmethod
-    async   def  get_patient_by_id(cls, db: AsyncSession, patient_id: int):
+    async def get_patient_by_id(cls, db: AsyncSession, patient_id: int):
         """
         通过患者ID获取患者信息
         :param db:
@@ -33,7 +34,8 @@ class PatientDao:
                 )
             ).scalars().first()
         )
-        return   db_patient
+        return db_patient
+
     @classmethod
     async def get_patient_detail_by_info(cls, db: AsyncSession, patient_info: PatientModel):
         """
@@ -42,18 +44,13 @@ class PatientDao:
         :param patient_info:
         :return:
         """
-        patient_info = (
-            (
-                await db.execute(
-                    select(Patient)
-                    .where(
-                        Patient.name == patient_info.name if patient_info.name else True,
-                        Patient.email == patient_info.email if patient_info.email else True,
-                        Patient.del_flag == '0'
-                    )
-                )
-            ).scalars().first()
-        )
+        conditions = [Patient.del_flag == '0']
+        if patient_info.name is not None:
+            conditions.append(Patient.name == patient_info.name)
+        if patient_info.email is not None:
+            conditions.append(Patient.email == patient_info.email)
+
+        patient_info = (await db.execute(select(Patient).where(*conditions))).scalars().first()
         return patient_info
 
     @classmethod

@@ -26,7 +26,7 @@ class Patient(Base, BaseMixin):
     identification_document: Mapped[str] = mapped_column(String(50), nullable=True, comment='身份证明文件路径或URL')
 
     def __repr__(self):
-        return f"Patient(name={self.name}, email={self.email})"
+        return f"Patient(id={self.id},name={self.name}, email={self.email})"
 
 
 class PatientDetail(Base, BaseMixin):
