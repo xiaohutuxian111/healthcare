@@ -6,9 +6,6 @@ from pydantic_validation_decorator import ValidateFields
 from sqlalchemy.ext.asyncio import AsyncSession
 from backend.app.config.get_db import get_db
 
-from src.service.login_service import LoginService
-
-from src.entity.vo.user_vo import CurrentUserModel
 from utils.page_util import PageResponseModel
 from utils.response_util import ResponseUtil
 from utils.common_util import bytes2file_response

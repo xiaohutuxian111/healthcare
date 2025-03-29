@@ -1,102 +1,56 @@
 # -*- coding:utf-8 -*-
+from datetime import datetime
+from venv import logger
 
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, Request
+from pydantic_validation_decorator import ValidateFields
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.requests import Request
-from backend.app.config.enums import BusinessType
+
 from config.get_db import get_db
-
-from backend.app.src.service.login_service import LoginService
-
-from backend.app.src.entity.vo.user_vo import CurrentUserModel
 from backend.app.utils.response_util import ResponseUtil
-from backend.app.utils.common_util import bytes2file_response
 
-from backend.app.src.entity.vo.patient_vo import PatientPageModel, PatientModel, PatientRegisterModel
+from backend.app.src.entity.vo.patient_vo import PatientModel, PatientBase, PatientDeTailModel
 from backend.app.src.service.patient_service import PatientService
+from src.service.patient_service import PatientDetailService
 
-patientController = APIRouter(prefix='/patients', dependencies=[Depends(LoginService.get_current_user)])
-
-
-@patientController.get('/{patient_id}/register', response_model=PatientModel)
-async def register_or_create(request: Request, patient_id: int, patient: PatientRegisterModel,
-                             query_db: AsyncSession = Depends(get_db)):
-    patient_info = await PatientService.get_patient_by_id(query_db, patient_id)
-
-    print(patient_info)
-
-    if patient_info is None:
-        await  PatientService.add_patient(query_db, patient)
+# patientController = APIRouter(prefix='/patients', dependencies=[Depends(LoginService.get_current_user)])
+patientController = APIRouter(prefix='/patient')
 
 
+@patientController.post("/add")
+@ValidateFields(validate_model='add_patient')
+async def add_patient(request: Request, add_patient: PatientModel,
+                      query_db: AsyncSession = Depends(get_db)):
+    add_patient.create_time = datetime.now()
+    add_patient.update_time = datetime.now()
+    add_patient.del_flag = '0'
+    add_patient.gender = add_patient.gender if add_patient.gender else '0'
+    add_patient_result = await   PatientService.add_patient(request, query_db, add_patient)
+
+    return ResponseUtil.success(msg='添加患者成功', data=add_patient_result)
 
 
-#
-# @patientController.get('/list')
-# async def get_patient_list(
-#         request: Request,
-#         query_db: AsyncSession = Depends(get_db),
-#         page_query: PatientPageModel = Depends(PatientPageModel.as_query),
-# ):
-#     patient_result = await PatientService.get_patient_list(query_db, page_query)
-#
-#     return ResponseUtil.success(model_content=patient_result)
-#
-#
-# @patientController.get('/getById/{patientId}')
-# async def get_patient_by_id(
-#         request: Request,
-#         patientId: int,
-#         query_db: AsyncSession = Depends(get_db),
-# ):
-#     patient = await PatientService.get_patient_by_id(query_db, patientId)
-#     return ResponseUtil.success(data=patient)
-#
-#
-# @patientController.post('/add')
-# async def add_patient(
-#         request: Request,
-#         add_model: PatientModel,
-#         query_db: AsyncSession = Depends(get_db),
-#         current_user: CurrentUserModel = Depends(LoginService.get_current_user),
-# ):
-#     add_model.create_by = current_user.user.user_id
-#     add_model.dept_id = current_user.user.dept_id
-#     add_dict_type_result = await PatientService.add_patient(query_db, add_model)
-#     return ResponseUtil.success(data=add_dict_type_result)
-#
-#
-# @patientController.put('/update')
-# async def update_patient(
-#         request: Request,
-#         edit_model: PatientModel,
-#         query_db: AsyncSession = Depends(get_db),
-#         current_user: CurrentUserModel = Depends(LoginService.get_current_user),
-# ):
-#     add_dict_type_result = await PatientService.update_patient(query_db, edit_model)
-#     return ResponseUtil.success(data=add_dict_type_result)
-#
-#
-# @patientController.delete('/delete/{patientIds}')
-# async def del_patient(
-#         request: Request,
-#         patientIds: str,
-#         query_db: AsyncSession = Depends(get_db),
-#         current_user: CurrentUserModel = Depends(LoginService.get_current_user),
-# ):
-#     ids = patientIds.split(',')
-#     del_result = await PatientService.del_patient(query_db, ids)
-#     return ResponseUtil.success(data=del_result)
-#
-#
-# @patientController.post('/export')
-# async def export_patient(
-#         request: Request,
-#         patient_form: PatientPageModel = Form(),
-#         query_db: AsyncSession = Depends(get_db),
-# ):
-#     # 获取全量数据
-#     export_result = await PatientService.export_patient_list(
-#         query_db, patient_form
-#     )
-#     return ResponseUtil.streaming(data=bytes2file_response(export_result))
+@patientController.post('/login')
+@ValidateFields(validate_model='login_patient')
+async def login(request: Request, login_patient: PatientBase, query_db: AsyncSession = Depends(get_db)):
+    query_patient = PatientModel(**login_patient.model_dump())
+    patient_info = await PatientService.get_patient_info(query_db, query_patient)
+    if patient_info:
+        return ResponseUtil.success(msg='登录成功', data=patient_info)
+    else:
+        return ResponseUtil.failure(msg='登录失败')
+
+
+@patientController.post("/detail/add/{patient_id}")
+@ValidateFields(validate_model='add_patient_info')
+async def add_patient_info(request: Request, patient_id: int, add_patient_info: PatientDeTailModel,
+                           query_db: AsyncSession = Depends(get_db)):
+    patient = await  PatientService.get_patient_detail_by_id(query_db, patient_id)
+    if not patient:
+        return ResponseUtil.failure(msg='患者不存在')
+    add_patient_info.pid = patient.id
+    add_patient_info.create_time = datetime.now()
+    add_patient_info.update_time = datetime.now()
+    add_patient_info_result = await   PatientDetailService.add_patient_info_services(request, query_db,
+                                                                                     add_patient_info)
+    return ResponseUtil.success(msg='添加患者信息成功', data=add_patient_info_result)

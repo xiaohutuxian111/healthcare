@@ -38,6 +38,7 @@ class DoctorModel(BaseModel):
         self.get_email()
 
 
+
 class DoctorQueryModel(DoctorModel):
     """
     查询模型

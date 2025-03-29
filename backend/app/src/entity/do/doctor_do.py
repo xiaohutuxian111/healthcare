@@ -17,3 +17,4 @@ class Doctor(Base, BaseMixin):
     image_path: Mapped[str] = mapped_column(String(255), nullable=True, comment='医生头像')
 
 
+
