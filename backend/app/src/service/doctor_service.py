@@ -4,12 +4,14 @@ from typing import List
 from fastapi import Request
 
 from pydantic import EmailStr
+from pydantic_core.core_schema import plain_serializer_function_ser_schema
 from redis.commands.search.commands import DICT_ADD_CMD
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from config.constant import CommonConstant
 from exceptions.exception import ServiceException
 from src.entity.vo.commom_vo import CrudResponseModel
+from src.entity.vo.doctor_vo import DeleteDoctorModel
 from utils.common_util import CamelCaseUtil, export_list2excel
 from utils.page_util import PageResponseModel
 from src.dao.doctor_dao import DoctorDao
@@ -98,3 +100,33 @@ class DoctorService:
         """
         doctor_list_result = await DoctorDao.get_doctor_list(query_db, doctor_page_query, is_page=is_page)
         return doctor_list_result
+
+    @classmethod
+    async def del_doctor_services(cls, request:Request, query_db:AsyncSession, page_object:DeleteDoctorModel):
+        """
+        删除doctor中的信息
+        :param request:
+        :param query_db:
+        :param page_object:
+        :return:
+        """
+        if page_object.doctor_ids:
+            doctor_id_list=  page_object.doctor_ids.strip().split(',')
+            try:
+                delete_doctor_list = []
+                for doctor_id in doctor_id_list:
+                    doctor_info =  await cls.doctor_detail_services(query_db, int(doctor_id))
+                    #Todo 检查当前医生是否存在预约,存在不能删除
+
+                    await DoctorDao.delete_doctor_dao(query_db, DoctorModel(id=int(doctor_id)))
+                    delete_doctor_list.append(doctor_info)
+                await   query_db.commit()
+                return CrudResponseModel(is_success=True, message='删除doctor成功',result=delete_doctor_list)
+
+
+            except Exception as e:
+                await query_db.rollback()
+                raise e
+        else:
+            raise ServiceException(message='需要删除的doctor的id为空')
+

@@ -14,7 +14,7 @@ from utils.response_util import ResponseUtil
 from utils.common_util import bytes2file_response
 from backend.app.utils.log_util import logger
 
-from src.entity.vo.doctor_vo import DoctorModel, DoctorPageQueryModel
+from src.entity.vo.doctor_vo import DoctorModel, DoctorPageQueryModel, DeleteDoctorModel
 from backend.app.src.service.doctor_service import DoctorService
 
 # doctorController = APIRouter(prefix='/doctor', dependencies=[Depends(LoginService.get_current_user)])
@@ -63,3 +63,15 @@ async def edit_doctor(request: Request, edit_doctor: DoctorModel, query_db: Asyn
     edit_doctor_result = await DoctorService.edit_doctor_services(request, query_db, edit_doctor)
     logger.info(edit_doctor_result)
     return ResponseUtil.success(msg=edit_doctor_result.message)
+
+
+@doctorController.delete('/delete/{doctor_ids}')
+async def delete_doctor(
+        request: Request,
+        doctor_ids: str,
+        query_db: AsyncSession = Depends(get_db)
+):
+    delete_doctor = DeleteDoctorModel(doctorIds=doctor_ids)
+    delete_doctor_result = await DoctorService.del_doctor_services(request, query_db, delete_doctor)
+    logger.info(delete_doctor_result.message)
+    return ResponseUtil.success(msg=delete_doctor_result.message)

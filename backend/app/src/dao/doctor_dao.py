@@ -84,3 +84,13 @@ class DoctorDao:
         doctor_list = await PageUtil.paginate(db=db, query=query, page_num=query_object.page_num,
                                               page_size=query_object.page_size, is_page=is_page)
         return doctor_list
+
+    @classmethod
+    async def delete_doctor_dao(cls, db: AsyncSession, doctor: DoctorModel):
+        """
+        删除doctor的数据库操作
+        :param db:
+        :param doctor:
+        :return:
+        """
+        await db.execute(delete(Doctor).where(Doctor.id.in_([doctor.id])))

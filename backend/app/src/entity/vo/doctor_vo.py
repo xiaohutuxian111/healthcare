@@ -59,4 +59,5 @@ class DeleteDoctorModel(BaseModel):
     """
     删除模型
     """
-    doctor_ids: List[int] = Field(default=None, description='医生id')
+    model_config = ConfigDict(alias_generator=to_camel)
+    doctor_ids: str = Field(default=None, description='需要删除的医生id')
