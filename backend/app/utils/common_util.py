@@ -9,7 +9,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 from sqlalchemy.engine.row import Row
 from typing import Any, Dict, List, Literal, Union
 from backend.app.config.database import Base
-from config.env import CachePathConfig
+from backend.app.config.env import CachePathConfig
 
 
 def worship():

@@ -39,7 +39,6 @@ class DoctorDao:
         """
         新增医生数据库操作
         """
-        print(doctor.model_dump())
         db_doctor = Doctor(**doctor.model_dump())
         db.add(db_doctor)
         await  db.flush()

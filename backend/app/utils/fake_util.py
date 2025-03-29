@@ -1,4 +1,5 @@
 import datetime
+import os.path
 import random
 from collections import defaultdict
 from functools import lru_cache
@@ -47,7 +48,9 @@ class IDcardInfoUtils(FakerUtil):
     @lru_cache()
     def load_area_codes(self):
         area_dict = defaultdict()
-        with open('area_codes_info.txt', 'r', encoding='utf-8') as file:
+        file_path = os.path.join(os.path.dirname(__file__), 'area_codes_info.txt')
+
+        with open(file_path, 'r', encoding='utf-8') as file:
             for line in file:
                 parts = line.strip().split(',')
                 if len(parts) == 2:
@@ -130,8 +133,6 @@ class IDcardInfoUtils(FakerUtil):
         return id_card_base + check_code
 
 
-
+FakerUtil = FakerUtil()
 IDcardInfo = IDcardInfoUtils()
-
-
 
