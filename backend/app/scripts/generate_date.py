@@ -6,12 +6,11 @@
 # @Desc    :
 import asyncio
 
-from sqlalchemy import insert
 
-from app.config.get_db import get_db
+
+
 from backend.app.utils.fake_util import IDcardInfo, FakerUtil
 from backend.app.src.entity.do.doctor_do import Doctor
-from backend.app.utils.common_util import *
 from backend.app.config.database import *
 
 
