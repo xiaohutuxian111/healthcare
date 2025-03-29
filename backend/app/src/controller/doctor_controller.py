@@ -9,15 +9,34 @@ from backend.app.config.get_db import get_db
 from src.service.login_service import LoginService
 
 from src.entity.vo.user_vo import CurrentUserModel
+from utils.page_util import PageResponseModel
 from utils.response_util import ResponseUtil
 from utils.common_util import bytes2file_response
 from backend.app.utils.log_util import logger
 
-from src.entity.vo.doctor_vo import DoctorModel
+from src.entity.vo.doctor_vo import DoctorModel, DoctorPageQueryModel
 from backend.app.src.service.doctor_service import DoctorService
 
 # doctorController = APIRouter(prefix='/doctor', dependencies=[Depends(LoginService.get_current_user)])
 doctorController = APIRouter(prefix='/doctor')
+
+
+@doctorController.get('/list', response_model=PageResponseModel)
+async def get_doctor_list(
+        request: Request,
+        doctor_page_query: DoctorPageQueryModel = Depends(DoctorPageQueryModel.as_query),
+        query_db: AsyncSession = Depends(get_db)
+):
+    """
+    分页查询数据
+    :param request:
+    :param query_db:
+    :return:
+    """
+    doctor_page_query_result = await DoctorService.get_doctor_list_services(query_db, doctor_page_query, is_page=True)
+    logger.info("doctor分页查询成功")
+
+    return ResponseUtil.success(model_content=doctor_page_query_result)
 
 
 @doctorController.post('/add')

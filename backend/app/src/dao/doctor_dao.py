@@ -9,7 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.app.src.entity.do.doctor_do import Doctor
 from backend.app.src.entity.vo.doctor_vo import DoctorModel
-from utils.page_util import PageUtil, PageResponseModel
+from src.entity.vo.doctor_vo import DoctorPageQueryModel
+from backend.app.utils.page_util import PageUtil, PageResponseModel
 
 
 class DoctorDao:
@@ -55,3 +56,31 @@ class DoctorDao:
     @classmethod
     async def edit_doctor(cls, db: AsyncSession, doctor: dict):
         await  db.execute(update(Doctor), doctor)
+
+    @classmethod
+    async def get_doctor_list(cls, db: AsyncSession, query_object: DoctorPageQueryModel, is_page: bool = False):
+        """
+        根据查询参数获取doctor的列表信息
+        :param db:
+        :param query_object:
+        :param is_page:
+        :return:
+        """
+        query = (
+            select(Doctor)
+            .where(
+                Doctor.name.like(f"%{query_object.name}%") if query_object.name else True,
+                Doctor.email.like(f"%{query_object.email}%") if query_object.email else True,
+                Doctor.del_flag == query_object.del_flag if query_object.del_flag else True,
+                Doctor.create_time.between(
+                    datetime.combine(datetime.strptime(query_object.begin_time, '%Y-%m-%d'), time(00, 00, 00)),
+                    datetime.combine(datetime.strptime(query_object.end_time, '%Y-%m-%d'), time(23, 59, 59)),
+                )
+                if query_object.begin_time and query_object.end_time else True,
+            )
+            .order_by(desc(Doctor.id))
+            .distinct()
+        )
+        doctor_list = await PageUtil.paginate(db=db, query=query, page_num=query_object.page_num,
+                                              page_size=query_object.page_size, is_page=is_page)
+        return doctor_list

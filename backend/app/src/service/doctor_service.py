@@ -13,7 +13,7 @@ from src.entity.vo.commom_vo import CrudResponseModel
 from utils.common_util import CamelCaseUtil, export_list2excel
 from utils.page_util import PageResponseModel
 from src.dao.doctor_dao import DoctorDao
-from backend.app.src.entity.vo.doctor_vo import DoctorModel
+from backend.app.src.entity.vo.doctor_vo import DoctorModel, DoctorPageQueryModel
 from backend.app.utils.log_util import logger
 
 
@@ -85,3 +85,16 @@ class DoctorService:
         else:
             result = DoctorModel(**dict())
         return result
+
+    @classmethod
+    async def get_doctor_list_services(cls, query_db: AsyncSession, doctor_page_query: DoctorPageQueryModel,
+                                       is_page: bool = True):
+        """
+        获取 doctor.列表信息
+        :param query_db:
+        :param doctor_page_query:
+        :param is_page:
+        :return:
+        """
+        doctor_list_result = await DoctorDao.get_doctor_list(query_db, doctor_page_query, is_page=is_page)
+        return doctor_list_result

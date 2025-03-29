@@ -38,21 +38,21 @@ class DoctorModel(BaseModel):
         self.get_email()
 
 
-@as_query
-class DoctorPageQueryModel(DoctorModel):
-    """
-    分页查询模型
-    """
-    page_num: int = Field(default=1, description='当前页码')
-    page_size: int = Field(default=10, description='每页记录数')
-
-
 class DoctorQueryModel(DoctorModel):
     """
     查询模型
     """
     begin_time: Optional[str] = Field(default=None, description='开始时间')
     end_time: Optional[str] = Field(default=None, description='结束时间')
+
+
+@as_query
+class DoctorPageQueryModel(DoctorQueryModel):
+    """
+    分页查询模型
+    """
+    page_num: int = Field(default=1, description='当前页码')
+    page_size: int = Field(default=10, description='每页记录数')
 
 
 class DeleteDoctorModel(BaseModel):
