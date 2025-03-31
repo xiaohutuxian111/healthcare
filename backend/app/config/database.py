@@ -6,7 +6,7 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from typing  import Literal
 
 from urllib.parse import quote_plus
-from backend.app.config.env import DataBaseConfig
+from config.env import DataBaseConfig
 
 
 
@@ -19,6 +19,7 @@ if DataBaseConfig.db_type == 'postgresql':
         f'postgresql+asyncpg://{DataBaseConfig.db_username}:{quote_plus(DataBaseConfig.db_password)}@'
         f'{DataBaseConfig.db_host}:{DataBaseConfig.db_port}/{DataBaseConfig.db_database}'
     )
+
 
 async_engine = create_async_engine(
     ASYNC_SQLALCHEMY_DATABASE_URL,

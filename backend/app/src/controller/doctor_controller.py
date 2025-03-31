@@ -11,7 +11,7 @@ from utils.response_util import ResponseUtil
 from utils.common_util import bytes2file_response
 from backend.app.utils.log_util import logger
 
-from src.entity.vo.doctor_vo import DoctorModel, DoctorPageQueryModel, DeleteDoctorModel
+from src.entity.vo.doctor_vo import DoctorModel, DoctorPageQueryModel, DeleteDoctorModel, AddDoctor
 from backend.app.src.service.doctor_service import DoctorService
 
 # doctorController = APIRouter(prefix='/doctor', dependencies=[Depends(LoginService.get_current_user)])
@@ -40,14 +40,18 @@ async def get_doctor_list(
 @ValidateFields(validate_model='add_doctor')
 async def add_doctor(
         request: Request,
-        add_doctor: DoctorModel,
+        add_doctor: AddDoctor,
         query_db: AsyncSession = Depends(get_db)
 
 ):
-    add_doctor.create_time = datetime.now()
-    add_doctor.update_time = datetime.now()
-    add_doctor.del_flag = '0'
-    add_doctor_result = await   DoctorService.add_doctor_services(request, query_db, add_doctor)
+
+    logger.warning(add_doctor.model_dump())
+    doctor_model =  DoctorModel(**add_doctor.model_dump())
+    logger.warning(doctor_model)
+    doctor_model.create_time = datetime.now()
+    doctor_model.update_time = datetime.now()
+    doctor_model.del_flag = '0'
+    add_doctor_result = await   DoctorService.add_doctor_services(request, query_db, doctor_model)
     return ResponseUtil.success(msg=add_doctor_result)
 
 

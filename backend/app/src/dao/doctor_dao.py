@@ -26,11 +26,11 @@ class DoctorDao:
         根据医生的数据查询医生信息
         """
 
-        conditions = [doctor.del_flag == '0']
+        conditions = [Doctor.del_flag == '0']
         if doctor.name is not None:
-            conditions.append(doctor.name == doctor.name)
+            conditions.append(Doctor.name == doctor.name)
         if doctor.email is not None:
-            conditions.append(doctor.email == doctor.email)
+            conditions.append(Doctor.email == doctor.email)
 
         db_doctor = (await db.execute(select(Doctor).where(*conditions))).scalars().first()
         return db_doctor

@@ -5,7 +5,7 @@ from pydantic import EmailStr
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped, relationship
 
-from backend.app.config.database import BaseMixin, Base
+from config.database import BaseMixin, Base
 
 
 

@@ -24,6 +24,14 @@ class DoctorModel(BaseModel):
     del_flag: Literal['0', '1'] = Field(default=None, description='删除标志(0代表存在 1代表删除)')
     update_time: Optional[datetime] = Field(default=None, description='更新时间')
 
+
+class AddDoctor(BaseModel):
+    # model_config = ConfigDict(alias_generator=to_camel)
+
+    name: Optional[str] = Field(default=None, description='医生姓名',)
+    email: Optional[EmailStr] = Field(default=None, description='医生邮箱')
+    imagePath: Optional[str] = Field(default=None, description='医生头像')
+
     @NotBlank(field_name='name', message='医生姓名不能为空')
     @Size(field_name='name', min_length=3, max_length=20, message='医生姓名长度在3-20位之间')
     def get_name(self):
@@ -36,7 +44,6 @@ class DoctorModel(BaseModel):
     def validate_fields(self):
         self.get_name()
         self.get_email()
-
 
 
 class DoctorQueryModel(DoctorModel):
